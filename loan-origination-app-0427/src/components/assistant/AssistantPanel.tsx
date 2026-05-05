@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useAssistant } from '../../hooks/useAssistant';
 import { useAssistantChat } from '../../hooks/useAssistantChat';
 import type { AssistantMessage } from '../../hooks/useAssistantChat';
@@ -44,7 +46,16 @@ export function AssistantPanel() {
   const handleSend = async (text: string) => {
     if (!text.trim() || isStreaming) return;
     setDraft('');
-    await sendMessage(text, context ? { seedContext: context.body } : undefined);
+    await sendMessage(
+      text,
+      context
+        ? {
+            seedContext: context.body,
+            caseInstanceId: context.caseInstanceId,
+            folderKey: context.folderKey,
+          }
+        : undefined,
+    );
   };
 
   return (
@@ -310,7 +321,9 @@ function Bubble({ message }: { message: AssistantMessage }) {
         />
       )}
       <div
-        className="max-w-[85%] px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap"
+        className={`max-w-[85%] px-3 py-2 text-[13px] leading-relaxed ${
+          isUser ? 'whitespace-pre-wrap' : 'lp-md'
+        }`}
         style={
           isUser
             ? {
@@ -326,7 +339,15 @@ function Bubble({ message }: { message: AssistantMessage }) {
               }
         }
       >
-        {message.content || (message.isStreaming && <TypingDots />)}
+        {message.content ? (
+          isUser ? (
+            message.content
+          ) : (
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+          )
+        ) : (
+          message.isStreaming && <TypingDots />
+        )}
       </div>
     </div>
   );

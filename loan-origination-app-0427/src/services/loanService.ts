@@ -121,6 +121,24 @@ export async function fetchLoanCaseById(
   }
 }
 
+// Resolves folderKey via PIMS when the URL doesn't carry it. Each instance
+// in the getAll response carries its own folderKey at instances[i].folderKey,
+// so we look it up by matching instanceId.
+export async function fetchFolderKeyByInstanceId(
+  sdk: UiPath,
+  caseInstanceId: string,
+): Promise<string | null> {
+  try {
+    const caseInstances = new CaseInstances(sdk);
+    const result = await caseInstances.getAll({ processKey: CASE_ID, pageSize: 100 });
+    const match = result.items.find((i) => i.instanceId === caseInstanceId);
+    return match?.folderKey ?? null;
+  } catch (err) {
+    console.warn('fetchFolderKeyByInstanceId failed', err);
+    return null;
+  }
+}
+
 export async function fetchCaseStages(
   sdk: UiPath,
   caseInstanceId: string,

@@ -36,7 +36,10 @@ export interface UseAssistantChatResult {
   isReady: boolean;
   isConfigured: boolean;
   error: string | null;
-  sendMessage: (text: string, opts?: { seedContext?: string }) => Promise<void>;
+  sendMessage: (
+    text: string,
+    opts?: { seedContext?: string; caseInstanceId?: string; folderKey?: string },
+  ) => Promise<void>;
   reset: () => void;
 }
 
@@ -177,17 +180,34 @@ export function useAssistantChat(): UseAssistantChatResult {
       const userId = `u-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const assistantId = `a-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
+      // IDs first so the agent's case-lookup tools can extract them without
+      // parsing prose. Inlined into the first user turn below.
+      const idLines: string[] = [];
+      if (opts?.caseInstanceId) idLines.push(`caseInstanceId: ${opts.caseInstanceId}`);
+      if (opts?.folderKey) idLines.push(`folderKey: ${opts.folderKey}`);
+      const seedFull =
+        opts?.seedContext || idLines.length > 0
+          ? [
+              idLines.length > 0
+                ? `Case identifiers (use these for tool calls):\n${idLines.join('\n')}`
+                : '',
+              opts?.seedContext ? `Case summary: ${opts.seedContext}` : '',
+            ]
+              .filter(Boolean)
+              .join('\n\n')
+          : '';
+
       // Optimistically append user + empty assistant placeholder BEFORE
       // we touch the SDK — avoids the multi-second blank pause.
       setMessages((prev) => {
         const additions: AssistantMessage[] = [];
         // Inject per-case context on the first send only
-        if (opts?.seedContext && !seededRef.current) {
+        if (seedFull && !seededRef.current) {
           seededRef.current = true;
           additions.push({
             id: `sys-${Date.now()}`,
             role: 'system',
-            content: opts.seedContext,
+            content: seedFull,
             createdAt: Date.now(),
           });
         }
@@ -240,8 +260,8 @@ export function useAssistantChat(): UseAssistantChatResult {
         // whichever case the user opened the panel from. Prepend it inline to
         // the user's first message so the agent receives a single user turn.
         const payload =
-          opts?.seedContext && seededRef.current && messages.length === 0
-            ? `Context: ${opts.seedContext}\n\n${trimmed}`
+          seedFull && messages.length === 0
+            ? `Context:\n${seedFull}\n\n${trimmed}`
             : trimmed;
 
         // Explicit message lifecycle (matches the SDK reference's recommended

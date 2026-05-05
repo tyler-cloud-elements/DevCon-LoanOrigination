@@ -6,6 +6,10 @@ export interface AssistantContextBlurb {
   label: string;
   /** Free-form context sent to the agent as an initial system-style hint. */
   body: string;
+  /** Orchestrator case instance GUID — required by the agent's case-lookup tools. */
+  caseInstanceId?: string;
+  /** Orchestrator folder GUID — required by the agent's case-lookup tools. */
+  folderKey?: string;
 }
 
 interface AssistantContextValue {

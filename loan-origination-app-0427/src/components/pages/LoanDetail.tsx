@@ -12,7 +12,12 @@ import { DetailsTab } from '../tabs/DetailsTab';
 import { DocumentsTab } from '../tabs/DocumentsTab';
 import { HistoryTab } from '../tabs/HistoryTab';
 import { CommentsTab } from '../tabs/CommentsTab';
-import { deriveCurrentStage, fetchCaseStages, fetchLoanCaseById } from '../../services/loanService';
+import {
+  deriveCurrentStage,
+  fetchCaseStages,
+  fetchFolderKeyByInstanceId,
+  fetchLoanCaseById,
+} from '../../services/loanService';
 import { useAuth } from '../../hooks/useAuth';
 import { MOCK_LOAN_DETAIL, buildLoanDetail } from '../../data/mockLoanData';
 import type { LoanCase, LoanDetailData } from '../../types/loan';
@@ -46,19 +51,38 @@ export function LoanDetail() {
   const [loading, setLoading] = useState(false);
   const [stages, setStages] = useState<CaseGetStageResponse[] | null>(null);
   const [refreshingStages, setRefreshingStages] = useState(false);
+  const [resolvedFolderKey, setResolvedFolderKey] = useState<string>('');
 
-  const isLive = !!folderKey && !!caseInstanceId && !caseInstanceId.startsWith('mock-');
+  const effectiveFolderKey = folderKey || resolvedFolderKey;
+  const isLive =
+    !!effectiveFolderKey && !!caseInstanceId && !caseInstanceId.startsWith('mock-');
+
+  // If the URL didn't carry ?folder=, resolve it from PIMS via
+  // instances[i].folderKey so the agent and downstream fetches still work.
+  useEffect(() => {
+    let cancelled = false;
+    if (folderKey || !caseInstanceId || caseInstanceId.startsWith('mock-')) {
+      setResolvedFolderKey('');
+      return;
+    }
+    fetchFolderKeyByInstanceId(sdk, caseInstanceId).then((fk) => {
+      if (!cancelled) setResolvedFolderKey(fk ?? '');
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [sdk, caseInstanceId, folderKey]);
 
   const reloadStages = useCallback(async () => {
     if (!isLive) return;
     setRefreshingStages(true);
     try {
-      const s = await fetchCaseStages(sdk, caseInstanceId, folderKey);
+      const s = await fetchCaseStages(sdk, caseInstanceId, effectiveFolderKey);
       if (s) setStages(s);
     } finally {
       setRefreshingStages(false);
     }
-  }, [sdk, caseInstanceId, folderKey, isLive]);
+  }, [sdk, caseInstanceId, effectiveFolderKey, isLive]);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,7 +91,7 @@ export function LoanDetail() {
       return;
     }
     setLoading(true);
-    fetchLoanCaseById(sdk, caseInstanceId, folderKey)
+    fetchLoanCaseById(sdk, caseInstanceId, effectiveFolderKey)
       .then((c) => {
         if (!cancelled) setRemoteCase(c);
       })
@@ -77,7 +101,7 @@ export function LoanDetail() {
     return () => {
       cancelled = true;
     };
-  }, [sdk, caseInstanceId, folderKey, isLive]);
+  }, [sdk, caseInstanceId, effectiveFolderKey, isLive]);
 
   useEffect(() => {
     if (!isLive) {
@@ -172,6 +196,8 @@ export function LoanDetail() {
           onClick={() =>
             openAssistant({
               label: caseId,
+              caseInstanceId: remoteCase?.caseInstanceId ?? caseInstanceId,
+              folderKey: remoteCase?.folderKey ?? effectiveFolderKey,
               body: `Loan case ${caseId} for ${detailData.borrower.fullName}. Stage: ${stage}. Loan: ${detailData.loanTerms.type} ${detailData.loanTerms.amount} at ${detailData.loanTerms.rate}. Credit ${detailData.metrics.creditScore}, DTI ${detailData.metrics.dti}%, LTV ${detailData.metrics.ltv}%. Property: ${detailData.property.address}. Employment: ${detailData.employment.title} at ${detailData.employment.employer}, ${detailData.employment.income}.`,
             })
           }
