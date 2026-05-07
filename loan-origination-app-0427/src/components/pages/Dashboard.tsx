@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../layout/Header';
 import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
+import { NewLoanModal } from '../dashboard/NewLoanModal';
 import { useLoanCases } from '../../hooks/useLoanCases';
-import { useAssistant } from '../../hooks/useAssistant';
 import { useToast } from '../../hooks/useToast';
 import type { LoanCase } from '../../types/loan';
 
@@ -34,7 +35,7 @@ const DOT_COLORS: Record<'ok' | 'cr' | 'wt' | 'hu', string> = {
 export function Dashboard() {
   const navigate = useNavigate();
   const { cases, refresh, usedFallback } = useLoanCases();
-  const { open: openAssistant } = useAssistant();
+  const [newLoanOpen, setNewLoanOpen] = useState(false);
 
   const liveCases = useMemo(() => cases.filter((c) => c.isReal), [cases]);
 
@@ -46,16 +47,23 @@ export function Dashboard() {
           usedFallback ? 'Demo data · Your agentic lending workspace' : 'Your agentic lending workspace'
         }
         onRefresh={refresh}
+        rightSlot={
+          <Button variant="primary" onClick={() => setNewLoanOpen(true)}>
+            + New loan
+          </Button>
+        }
       />
       <div className="flex-1 overflow-y-auto p-6">
-        <MorningBrief
-          onOpenQueue={() => navigate('/queue')}
-          onAskAgent={() => openAssistant()}
-        />
-        <DecideToday cases={cases} />
+        <MorningBrief onOpenQueue={() => navigate('/queue')} />
         <PortfolioPulse onNav={navigate} />
+        <DecideToday cases={cases} />
         {liveCases.length > 0 && <LiveInstancesTeaser liveCases={liveCases} />}
       </div>
+      <NewLoanModal
+        open={newLoanOpen}
+        onClose={() => setNewLoanOpen(false)}
+        onCreated={refresh}
+      />
     </>
   );
 }
@@ -63,7 +71,7 @@ export function Dashboard() {
 // ────────────────────────────────────────────────────────────────────────────
 // Zone 1: Morning Brief
 // ────────────────────────────────────────────────────────────────────────────
-function MorningBrief({ onOpenQueue, onAskAgent }: { onOpenQueue: () => void; onAskAgent: () => void }) {
+function MorningBrief({ onOpenQueue }: { onOpenQueue: () => void }) {
   const navigate = useNavigate();
   const greetingDate = useMemo(() => {
     const d = new Date();
@@ -151,17 +159,6 @@ function MorningBrief({ onOpenQueue, onAskAgent }: { onOpenQueue: () => void; on
             }}
           >
             Open decision queue →
-          </button>
-          <button
-            onClick={onAskAgent}
-            className="px-4 py-2.5 rounded-[9px] text-[12.5px] font-semibold inline-flex items-center gap-1.5 transition-colors"
-            style={{
-              background: 'var(--surface)',
-              color: 'var(--fg2)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            Ask case manager
           </button>
         </div>
       </div>

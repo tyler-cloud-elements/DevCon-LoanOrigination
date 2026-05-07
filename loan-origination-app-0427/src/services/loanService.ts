@@ -1,11 +1,14 @@
 import { CaseInstances } from '@uipath/uipath-typescript/cases';
 import type { CaseGetStageResponse, CaseInstanceGetResponse } from '@uipath/uipath-typescript/cases';
+import { Entities } from '@uipath/uipath-typescript/entities';
+import type { EntityInsertResponse } from '@uipath/uipath-typescript/entities';
 import type { UiPath } from '@uipath/uipath-typescript/core';
 import { UiPathError } from '@uipath/uipath-typescript/core';
 import type { LoanCase, LoanStage } from '../types/loan';
 
 const CASE_ID = import.meta.env.VITE_CASE_ID ?? '';
 const APPROVE_WEBHOOK_URL = import.meta.env.VITE_APPROVE_WEBHOOK_URL ?? '';
+const LOAN_ENTITY_ID = import.meta.env.VITE_LOAN_ENTITY_ID ?? '';
 
 function hashSeed(s: string) {
   let h = 0;
@@ -253,6 +256,53 @@ export function deriveCurrentStage(stages: CaseGetStageResponse[] | null | undef
   }
 
   return mapped[0].stage;
+}
+
+export interface NewLoanApplicationInput {
+  loanType: string;
+  loanAmount: number;
+  applicantId: string;
+}
+
+// Creates a new LoanOriginationEntity row in DataFabric. Mirrors the curl
+// example in AGENTS.md — null-fills all of the per-stage boolean flags so
+// the case process picks the row up in its initial state.
+export async function createLoanApplication(
+  sdk: UiPath,
+  input: NewLoanApplicationInput,
+): Promise<EntityInsertResponse> {
+  if (!LOAN_ENTITY_ID) {
+    throw new Error('VITE_LOAN_ENTITY_ID is not configured');
+  }
+  const entities = new Entities(sdk);
+  const data: Record<string, unknown> = {
+    LoanType: input.loanType,
+    LoanAmount: input.loanAmount,
+    ApplicationStatus: 'New',
+    IsClosed: null,
+    IsEscalated: null,
+    IsRejected: null,
+    IsWithdrawn: null,
+    DocumentsRequested: null,
+    EligibilityScreeningComplete: null,
+    IntakeReviewComplete: null,
+    ExtractDocsComplete: null,
+    LoanPackageReviewComplete: null,
+    UnderwritingReviewComplete: null,
+    ComplianceComplete: null,
+    FullAuditComplete: null,
+    QCComplete: null,
+    CDLEComparisonComplete: null,
+    FundingComplete: null,
+    InvestorDeliveryComplete: null,
+    Applicant: { Id: input.applicantId },
+    UnderwritingJobs: null,
+    DisclosureDelivered: null,
+    AppraisalComplete: null,
+    DisclosureAcknowledged: null,
+    RiskAssessmentComplete: null,
+  };
+  return entities.insertRecordById(LOAN_ENTITY_ID, data);
 }
 
 export async function triggerApproveWebhook(accessToken?: string): Promise<void> {
