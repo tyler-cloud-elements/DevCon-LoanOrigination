@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+*.tgz
+
+# Environment variables — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Vite build artifacts that don't belong in source control
+node_modules/.vite/
+.vite/

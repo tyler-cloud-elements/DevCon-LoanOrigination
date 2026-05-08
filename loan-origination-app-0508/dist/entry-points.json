@@ -1,0 +1,24 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points-doc-001",
+  "entryPoints": [
+    {
+      "filePath": "index.html",
+      "uniqueId": "afcc65fd-926d-458e-b8cd-4f99231f153a",
+      "type": "api",
+      "input": {
+        "amount": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "output": {
+        "status": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}
