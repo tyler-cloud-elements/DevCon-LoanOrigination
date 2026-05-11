@@ -7,6 +7,7 @@ import type {
   CountRow,
   HighValueStats,
 } from '../../services/insightsService';
+import dataFabricIcon from '../../assets/datafabric.png';
 
 const PALETTE = [
   'var(--blue)',
@@ -559,27 +560,18 @@ export function VerticalBars({
   );
 }
 
-// Small badge marking a widget as DataFabric-powered. Mirrors the purple
-// ApiBadge on the Insights page but in the DF teal/green palette so it reads
-// at a glance alongside hardcoded Analytics widgets.
+// Small mark identifying a widget as DataFabric-powered.
 export function PoweredByDfBadge() {
   return (
-    <span
+    <img
+      src={dataFabricIcon}
+      alt="Powered by DataFabric"
       title="Powered by DataFabric — live aggregate / groupBy queries via @uipath/uipath-typescript"
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[9.5px] font-mono leading-none whitespace-nowrap"
-      style={{
-        background: 'rgba(15,157,143,0.1)',
-        border: '1px solid rgba(15,157,143,0.4)',
-        color: '#0F9D8F',
-      }}
-    >
-      <span
-        className="w-1 h-1 rounded-full"
-        style={{ background: '#0F9D8F' }}
-        aria-hidden
-      />
-      Powered by DF
-    </span>
+      width={16}
+      height={16}
+      className="inline-block align-middle"
+      style={{ objectFit: 'contain' }}
+    />
   );
 }
 
