@@ -1,0 +1,439 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F4F5F7;
+  --surface: #FFFFFF;
+  --elevated: #F9FAFB;
+  --hover: #F3F4F6;
+  --fg: #111827;
+  --fg2: #374151;
+  --fg3: #6B7280;
+  --fg4: #9CA3AF;
+  --border: #E5E7EB;
+  --border2: #D1D5DB;
+  --blue: #2563EB;
+  --blue-bg: #EFF6FF;
+  --blue-bd: #BFDBFE;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-bd: #A7F3D0;
+  --amber: #D97706;
+  --amber-bg: #FFFBEB;
+  --amber-bd: #FDE68A;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --navy: #0E2A47;
+  --navy-mid: #1E4480;
+  --navy-bg: #EEF3FA;
+  --navy-bd: #C7D7EA;
+  --accent: #0F9D8F;
+  --accent-bright: #14B8A6;
+  --accent-soft: #5EEAD4;
+  /* Repurposed: was purple, now cool green accent (Accrual Bank brand) */
+  --purple: #0F9D8F;
+  --purple-bg: #ECFDF8;
+  --purple-bd: #99F6E4;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --radius: 10px;
+}
+
+[data-theme="dark"] {
+  --bg: #0B0F19;
+  --surface: #111827;
+  --elevated: #1F2937;
+  --hover: #1F2937;
+  --fg: #F3F4F6;
+  --fg2: #D1D5DB;
+  --fg3: #9CA3AF;
+  --fg4: #6B7280;
+  --border: #1F2937;
+  --border2: #374151;
+  --blue-bg: rgba(37, 99, 235, 0.12);
+  --blue-bd: rgba(37, 99, 235, 0.25);
+  --green-bg: rgba(5, 150, 105, 0.12);
+  --green-bd: rgba(5, 150, 105, 0.25);
+  --amber-bg: rgba(217, 119, 6, 0.12);
+  --amber-bd: rgba(217, 119, 6, 0.25);
+  --red-bg: rgba(220, 38, 38, 0.12);
+  --navy-bg: rgba(30, 68, 128, 0.16);
+  --navy-bd: rgba(30, 68, 128, 0.3);
+  --purple-bg: rgba(15, 157, 143, 0.12);
+  --purple-bd: rgba(15, 157, 143, 0.3);
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@keyframes lp-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 157, 143, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(15, 157, 143, 0);
+  }
+}
+
+@keyframes lp-sp {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes lp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes lp-agent-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 157, 143, 0.35), 0 0 8px rgba(15, 157, 143, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(15, 157, 143, 0), 0 0 16px rgba(15, 157, 143, 0.22);
+  }
+}
+
+@keyframes lp-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.lp-pulse {
+  animation: lp-pulse 2s infinite;
+}
+
+.lp-sp {
+  animation: lp-sp 2s infinite;
+}
+
+.lp-agent-pulse {
+  animation: lp-agent-pulse 1.5s ease-in-out infinite;
+}
+
+.lp-blink-cursor {
+  animation: lp-blink 1s step-end infinite;
+}
+
+/* Markdown rendered inside assistant chat bubbles. Tailwind's `prose` plugin
+ * isn't installed, so we hand-tune spacing/sizes against the bubble's 13px body. */
+.lp-md > * + * {
+  margin-top: 0.5rem;
+}
+.lp-md p {
+  margin: 0;
+}
+.lp-md h1,
+.lp-md h2,
+.lp-md h3,
+.lp-md h4 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0.75rem 0 0.25rem;
+}
+.lp-md h1 {
+  font-size: 15px;
+}
+.lp-md h2 {
+  font-size: 14px;
+}
+.lp-md h3,
+.lp-md h4 {
+  font-size: 13px;
+}
+.lp-md ul,
+.lp-md ol {
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+.lp-md ul {
+  list-style: disc;
+}
+.lp-md ol {
+  list-style: decimal;
+}
+.lp-md li + li {
+  margin-top: 0.125rem;
+}
+.lp-md code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  background: var(--elevated);
+  padding: 0.0625rem 0.25rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.lp-md pre {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.625rem;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.lp-md pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+.lp-md a {
+  color: var(--blue);
+  text-decoration: underline;
+}
+.lp-md blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 0.625rem;
+  color: var(--fg3);
+  margin: 0.25rem 0;
+}
+.lp-md table {
+  border-collapse: collapse;
+  font-size: 12px;
+  width: 100%;
+}
+.lp-md th,
+.lp-md td {
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+}
+.lp-md th {
+  background: var(--elevated);
+  font-weight: 600;
+}
+.lp-md hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.5rem 0;
+}
+
+/* Accrual Bank — compounding-growth glyph: 3 ascending bars + accent endpoint dot */
+.hero-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-logo::before {
+  content: '';
+  width: 24px;
+  height: 14px;
+  background: #ffffff;
+  clip-path: polygon(
+    0% 100%, 0% 65%, 22% 65%, 22% 100%,
+    33% 100%, 33% 35%, 55% 35%, 55% 100%,
+    66% 100%, 66% 5%, 88% 5%, 88% 100%
+  );
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-55%);
+}
+
+.hero-logo::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #5EEAD4;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  box-shadow: 0 0 6px rgba(94, 234, 212, 0.65);
+}
+
+.sb-logo {
+  position: relative;
+}
+
+.sb-logo::before {
+  content: '';
+  width: 17px;
+  height: 10px;
+  background: #ffffff;
+  clip-path: polygon(
+    0% 100%, 0% 65%, 22% 65%, 22% 100%,
+    33% 100%, 33% 35%, 55% 35%, 55% 100%,
+    66% 100%, 66% 5%, 88% 5%, 88% 100%
+  );
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-55%);
+}
+
+.sb-logo::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5EEAD4;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  box-shadow: 0 0 4px rgba(94, 234, 212, 0.65);
+}
+
+.agent-avatar {
+  position: relative;
+}
+
+.agent-avatar::before {
+  content: '';
+  width: 16px;
+  height: 9px;
+  background: #ffffff;
+  clip-path: polygon(
+    0% 100%, 0% 65%, 22% 65%, 22% 100%,
+    33% 100%, 33% 35%, 55% 35%, 55% 100%,
+    66% 100%, 66% 5%, 88% 5%, 88% 100%
+  );
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-55%);
+}
+
+.agent-avatar::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5EEAD4;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  box-shadow: 0 0 4px rgba(94, 234, 212, 0.65);
+}
+
+/* Native scrollbar styling for dark theme */
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 10px;
+}
+
+/* ═══════ V2 PRIMITIVES ═══════ */
+
+/* Live working dot — for cases the agent is actively processing */
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--purple);
+  margin-right: 4px;
+  animation: lp-pulse 1.8s infinite;
+  vertical-align: middle;
+}
+
+/* Shimmer animation (used by Brief and agent-pill) */
+@keyframes lp-shimmer {
+  0% {
+    left: -60%;
+  }
+  60%,
+  100% {
+    left: 120%;
+  }
+}
+
+.lp-shimmer-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.lp-shimmer-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(94, 234, 212, 0.18),
+    transparent
+  );
+  animation: lp-shimmer 3.6s infinite;
+  pointer-events: none;
+}
+
+@keyframes lp-stage-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(37, 99, 235, 0.28);
+  }
+}
+
+.lp-stage-pulse {
+  animation: lp-stage-pulse 2s infinite;
+}
+
+@keyframes lp-think-bounce {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.lp-think-dot {
+  animation: lp-think-bounce 1.2s infinite;
+}

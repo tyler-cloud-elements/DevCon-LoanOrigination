@@ -7,7 +7,7 @@ const LOAN_TYPES = ['Home', 'Conventional', 'FHA', 'VA', 'Jumbo', 'Refinance'];
 
 // Static applicant ID for now — taken from the demo curl payload. Will be
 // replaced with a real applicant lookup later.
-const STATIC_APPLICANT_ID = import.meta.env.VITE_APPLICANT_ID ?? 'b2a132a0-fb3d-f111-8ef3-00224886d158';
+const STATIC_APPLICANT_ID = import.meta.env.VITE_APPLICANT_ID ?? '';
 
 interface NewLoanModalProps {
   open: boolean;

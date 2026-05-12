@@ -1,0 +1,4 @@
+{
+  "scope": "OR.Analytics OR.Audit OR.BackgroundTasks OR.Buckets OR.Execution OR.Folders OR.Hypervisor OR.Jobs OR.Machines OR.ML OR.Monitoring OR.Queues OR.Robots OR.Settings OR.Tasks OR.Users OR.Webhooks PIMS DataFabric.Data.Read DataFabric.Data.Write DataFabric.Schema.Read ConversationalAgents",
+  "clientId": "6057f0f5-cbcc-4775-8589-eabdb038c4b1"
+}
