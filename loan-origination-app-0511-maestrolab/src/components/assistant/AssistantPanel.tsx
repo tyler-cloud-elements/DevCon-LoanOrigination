@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { useAssistant } from '../../hooks/useAssistant';
 import { useAssistantChat } from '../../hooks/useAssistantChat';
 import type { AssistantMessage } from '../../hooks/useAssistantChat';
+import { useAuth } from '../../hooks/useAuth';
 
 const SUGGESTED_CHIPS_GLOBAL = [
   'Summarize my pipeline',
@@ -288,6 +289,7 @@ function EmptyState({
 }
 
 function Bubble({ message }: { message: AssistantMessage }) {
+  const { user } = useAuth();
   if (message.role === 'system') {
     return (
       <div
@@ -312,7 +314,7 @@ function Bubble({ message }: { message: AssistantMessage }) {
           className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[9px] font-semibold flex-shrink-0"
           style={{ background: 'var(--blue)' }}
         >
-          TT
+          {user?.initials ?? 'ME'}
         </div>
       ) : (
         <div

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 type BadgeTone = 'p' | 'a' | 'b' | 'r';
 
@@ -55,6 +56,9 @@ const BADGE_STYLES: Record<BadgeTone, { bg: string; fg: string }> = {
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
+  const displayName = user?.name ?? 'Loan Officer';
+  const initials = user?.initials ?? 'LO';
 
   return (
     <aside
@@ -134,11 +138,11 @@ export function Sidebar() {
           className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0"
           style={{ background: 'linear-gradient(135deg,#1E4480,#0F9D8F)' }}
         >
-          TT
+          {initials}
         </div>
         {!collapsed && (
           <div>
-            <div className="text-xs font-medium text-white">Tyler Toth</div>
+            <div className="text-xs font-medium text-white">{displayName}</div>
             <div className="text-[10px] text-white/35">Loan Officer</div>
           </div>
         )}

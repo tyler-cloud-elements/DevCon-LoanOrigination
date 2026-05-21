@@ -125,7 +125,7 @@ function AnCard({
 }
 
 export function Analytics() {
-  const { sdk } = useAuth();
+  const { sdk, user } = useAuth();
   const { toast } = useToast();
   const [dfData, setDfData] = useState<AnalyticsData | null>(null);
   const [dfLoading, setDfLoading] = useState(true);
@@ -243,7 +243,12 @@ export function Analytics() {
           </AnCard>
           <AnCard title="Loan Officer Leaderboard">
             <div className="flex flex-col gap-2 text-[13px]">
-              <LOfficer ini="TT" color="#1E4480,#0F9D8F" name="Tyler Toth" stats="12 active · 94%" />
+              <LOfficer
+                ini={user?.initials ?? 'ME'}
+                color="#1E4480,#0F9D8F"
+                name={user?.name ?? 'You'}
+                stats="12 active · 94%"
+              />
               <LOfficer ini="AJ" color="#EC4899,#F43F5E" name="Alex Johnson" stats="10 active · 96%" />
               <LOfficer ini="DL" color="#F59E0B,#EF4444" name="David Lee" stats="8 active · 91%" />
               <LOfficer ini="MK" color="#10B981,#059669" name="Mira Kim" stats="9 active · 98%" />

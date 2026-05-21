@@ -5,6 +5,7 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { NewLoanModal } from '../dashboard/NewLoanModal';
 import { useLoanCases } from '../../hooks/useLoanCases';
+import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import type { LoanCase } from '../../types/loan';
 
@@ -49,6 +50,7 @@ export function Dashboard() {
 // ────────────────────────────────────────────────────────────────────────────
 function MorningBrief({ onOpenQueue }: { onOpenQueue: () => void }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const greetingDate = useMemo(() => {
     const d = new Date();
     const h = d.getHours();
@@ -58,8 +60,9 @@ function MorningBrief({ onOpenQueue }: { onOpenQueue: () => void }) {
       month: 'long',
       day: 'numeric',
     });
-    return { greet: `${greet}, Tyler`, sub: `${subtitle} · Your morning brief` };
-  }, []);
+    const who = user?.firstName ?? 'there';
+    return { greet: `${greet}, ${who}`, sub: `${subtitle} · Your morning brief` };
+  }, [user?.firstName]);
 
   return (
     <div
