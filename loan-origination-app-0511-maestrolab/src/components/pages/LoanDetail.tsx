@@ -166,7 +166,7 @@ export function LoanDetail() {
           <div className="flex gap-3 mt-0.5 text-[11px] items-center" style={{ color: 'var(--fg3)' }}>
             <Pill tone="blue">In Progress</Pill>
             <span>{stage}</span>
-            <span style={{ color: 'var(--green)' }}>● 18d remaining</span>
+            <span style={{ color: 'var(--red)' }}>● 12h left</span>
           </div>
         </div>
         {maestroUrl && (
